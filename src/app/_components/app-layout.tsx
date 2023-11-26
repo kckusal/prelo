@@ -3,13 +3,14 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type FC, type ReactNode, useMemo, Fragment } from "react";
 import { Toaster } from "react-hot-toast";
-import { useAuthToken } from "../_store/auth";
+import { useAuthToken, useAuthUser } from "../_store/auth";
 import { Link } from "./page-utils";
 import {
   REDIRECT_FOR_AUTH_ROUTE,
   NON_PROTECTED_ROUTES,
   REDIRECT_AFTER_AUTH_ROUTE,
 } from "../_config/default";
+import { api } from "~/trpc/react";
 
 const Header = () => {
   const { token } = useAuthToken();
@@ -35,9 +36,22 @@ const Header = () => {
 };
 
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
-  const { token } = useAuthToken();
+  const { token, removeToken } = useAuthToken();
+  const { user, setUser } = useAuthUser();
   const pathName = usePathname();
   const router = useRouter();
+
+  const getMe = api.auth.me.useMutation({
+    onSuccess: (data) => {
+      if (data.user) {
+        setUser(data.user);
+      }
+    },
+    onError: (err) => {
+      console.log({ err });
+      // removeToken();
+    },
+  });
 
   const redirectUrl = useMemo(() => {
     const isProtectedRoute = !NON_PROTECTED_ROUTES.includes(pathName);
@@ -58,7 +72,14 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [redirectUrl, router]);
 
-  console.log(redirectUrl);
+  useEffect(() => {
+    if (!token) return;
+    // get user details
+    getMe.mutate({ authToken: token });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  console.log({ user });
 
   if (redirectUrl) {
     return <Fragment key="AppLayout"></Fragment>;

@@ -1,5 +1,10 @@
 import { db } from "../db";
-import { compareUserPassword, signJwt, hashUserPassword } from "../utils/auth";
+import {
+  compareUserPassword,
+  signJwt,
+  hashUserPassword,
+  verifyJwt,
+} from "../utils/auth";
 import customConfig from "../config/default";
 
 import { type TRPCContext } from "../api/trpc";
@@ -13,7 +18,9 @@ const cookieOptions = {
 
 export const accessTokenCookieOptions = {
   ...cookieOptions,
-  expires: new Date(Date.now() + customConfig.accessTokenExpiresIn * 60 * 1000),
+  expires: new Date(
+    Date.now() + customConfig.accessTokenExpiresInMinutes * 60 * 1000,
+  ),
 };
 
 interface LoginParam {
@@ -26,6 +33,10 @@ interface RegisterParam {
   lastName?: string | undefined;
   email: string;
   password: string;
+}
+
+interface JwtAccessTokenPayload {
+  user: { id: number; firstName: string; email: string };
 }
 
 export class AuthService {
@@ -45,10 +56,12 @@ export class AuthService {
       if (!isPasswordMatching) {
         throw new Error("No user found with these credentials.");
       }
-      const jwtUserData = {
-        id: user.id,
-        firstName: user.firstName,
-        email: user.email,
+      const jwtUserData: JwtAccessTokenPayload = {
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          email: user.email,
+        },
       };
 
       // Create access token
@@ -56,7 +69,7 @@ export class AuthService {
         { user: jwtUserData },
         "accessTokenPrivateKey",
         {
-          expiresIn: `${customConfig.accessTokenExpiresIn}m`,
+          expiresIn: `${customConfig.accessTokenExpiresInMinutes}m`,
         },
       );
 
@@ -90,6 +103,7 @@ export class AuthService {
     // check if user with this email already exists
     console.log("Checking if user with this email already exists...");
     const existingUser = await db.user.findFirst({
+      select: { id: true },
       where: { email },
     });
 
@@ -110,5 +124,33 @@ export class AuthService {
         passwordHash,
       },
     });
+  }
+
+  static async getMe({ authToken }: { authToken: string }) {
+    if (!authToken) return { user: null };
+
+    const jwtPayload = verifyJwt<JwtAccessTokenPayload>(
+      authToken,
+      "accessTokenPublicKey",
+    );
+
+    if (!jwtPayload?.user.id) {
+      throw new Error("Invalid JWT access token!");
+    }
+
+    console.log("Getting user...");
+    const user = await db.user.findFirst({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: { id: jwtPayload.user.id },
+    });
+
+    return { user };
   }
 }

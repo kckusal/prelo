@@ -1,5 +1,5 @@
 interface CustomConfigType {
-  accessTokenExpiresIn: number;
+  accessTokenExpiresInMinutes: number;
   origin: string;
 
   dbUri: string;
@@ -8,7 +8,7 @@ interface CustomConfigType {
 }
 
 const customConfig: CustomConfigType = {
-  accessTokenExpiresIn: 15,
+  accessTokenExpiresInMinutes: 120,
   origin: "http://localhost:3000",
 
   dbUri: process.env.DATABASE_URL!,

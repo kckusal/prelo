@@ -25,11 +25,10 @@ export const signJwt = (
   options: SignOptions = {},
 ) => {
   console.log("Signing JWT...");
-  const privateKey = Buffer.from(customConfig[key], "base64");
-
+  const privateKey = customConfig[key];
   return jwt.sign(payload, privateKey, {
     ...(options && options),
-    algorithm: "HS256",
+    algorithm: "RS256", // RS256 algorithm requires asymmetric RSA key pair
   });
 };
 
@@ -37,13 +36,16 @@ export const verifyJwt = <T>(
   token: string,
   key: "accessTokenPublicKey",
 ): T | null => {
+  const publicKey = customConfig[key];
+
   try {
     console.log("Verifying JWT: ", token);
-    const publicKey = Buffer.from(customConfig[key], "base64");
 
-    return jwt.verify(token, publicKey) as T;
+    return jwt.verify(token, publicKey, {
+      algorithms: ["RS256"],
+    }) as T;
   } catch (error) {
     console.log(error);
-    return null;
+    throw new Error("Auth token verification failed!");
   }
 };

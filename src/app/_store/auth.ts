@@ -1,3 +1,4 @@
+import { type User } from "@prisma/client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -18,3 +19,18 @@ export const useAuthToken = create<AuthStore>()(
     { name: "auth" },
   ),
 );
+
+type Me = Pick<
+  User,
+  "id" | "firstName" | "lastName" | "email" | "createdAt" | "updatedAt"
+>;
+
+interface AuthUser {
+  user: Me | null;
+  setUser: (user: Me) => void;
+}
+
+export const useAuthUser = create<AuthUser>((set) => ({
+  user: null,
+  setUser: (user: Me) => set({ user: user }),
+}));

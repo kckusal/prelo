@@ -37,6 +37,7 @@ export const LoginForm = () => {
 
         return errors;
       }}
+      validateOnChange={false}
       onSubmit={(values) => {
         loginUser.mutate(values);
       }}
@@ -62,6 +63,7 @@ export const LoginForm = () => {
               required
               autoComplete="email"
               placeholder="john@example.com"
+              autoFocus
             />
           </Form.Item>
 
