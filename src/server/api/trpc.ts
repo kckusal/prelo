@@ -7,7 +7,6 @@
  * need to use are documented accordingly near the end.
  */
 import { initTRPC } from "@trpc/server";
-import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -25,7 +24,7 @@ import { db } from "~/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = (opts: { req: NextRequest }) => {
+export const createTRPCContext = (opts: { headers: Headers }) => {
   return {
     db,
     ...opts,

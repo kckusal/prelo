@@ -22,6 +22,8 @@ const config = {
       "error",
       { checksVoidReturn: { attributes: false } },
     ],
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-unsafe-call": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
   },
