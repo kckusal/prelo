@@ -75,16 +75,23 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const pathName = usePathname();
   const router = useRouter();
 
-  const getMe = api.auth.me.useMutation({
+  const { mutate: fetchMe } = api.auth.me.useMutation({
+    retry: false,
     onSuccess: (data) => {
       if (data.user) {
         setUser(data.user);
+      } else {
+        removeToken();
       }
     },
     onError: (err) => {
       console.log({ err });
-      toast.error(err?.message || "Something went wrong!");
-      if (token) {
+      toast.error(
+        err?.message ||
+          "Something went wrong while fetching auth data! Logging out...",
+      );
+
+      if (err.message?.includes("token")) {
         removeToken();
       }
     },
@@ -110,13 +117,10 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   }, [redirectUrl, router]);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || user) return;
     // get user details
-    getMe.mutate({ authToken: token });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  console.log({ user });
+    fetchMe({ authToken: token });
+  }, [fetchMe, user, token]);
 
   if (redirectUrl) {
     return <Fragment key="AppLayout"></Fragment>;
