@@ -25,10 +25,10 @@ import { db } from "~/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = (opts: { headers: Headers }) => {
-  return {
+  return Promise.resolve({
     db,
     ...opts,
-  };
+  });
 };
 
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
