@@ -17,7 +17,7 @@ const Header = () => {
   const { token } = useAuthToken();
 
   return (
-    <div className=" sticky top-0 flex h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
+    <div className=" sticky top-0 flex h-full max-h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
       <Link
         href="/dashboard"
         className=" text-white hover:text-gray-200 hover:no-underline"
@@ -123,12 +123,12 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <div key="AppLayout" className=" flex flex-col">
+    <div key="AppLayout" className=" flex h-full flex-col">
       <Toaster />
       <Header />
       {token && <UserNavigation />}
 
-      <main className=" mx-auto min-h-[250px] min-w-[250px] max-w-[600px] bg-slate-100 px-6 py-6 text-gray-700 md:p-8">
+      <main className=" mx-auto h-full min-h-[250px] w-full min-w-[250px] px-6 py-6 text-gray-700 md:p-8">
         {children}
       </main>
     </div>
