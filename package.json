@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "npm install -g node-pre-gyp && node-pre-gyp rebuild -C ./node_modules/argon2 && next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "dev": "next dev",
