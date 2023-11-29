@@ -164,7 +164,7 @@ export const RegisterForm = () => {
 
           <Form.Button
             type="submit"
-            className=" self-center"
+            className=" mb-4 self-center"
             disabled={registerUser.isLoading}
           >
             Register

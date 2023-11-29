@@ -128,7 +128,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <Header />
       {token && <UserNavigation />}
 
-      <main className=" mx-auto h-full min-h-[250px] w-full min-w-[250px] px-6 py-6 text-gray-700 md:p-8">
+      <main className=" mx-auto h-full min-h-[250px] w-full min-w-[250px] text-gray-700">
         {children}
       </main>
     </div>

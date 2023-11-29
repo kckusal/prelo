@@ -44,7 +44,7 @@ export const LoginForm = () => {
     >
       {({ values, errors, handleChange, handleSubmit }) => (
         <form
-          className=" mt-6 flex flex-col items-start gap-y-4 "
+          className=" flex flex-col items-start gap-y-4 "
           onSubmit={handleSubmit}
         >
           <Form.Item
@@ -88,7 +88,7 @@ export const LoginForm = () => {
 
           <Form.Button
             type="submit"
-            className=" self-center"
+            className=" mb-2 self-center"
             disabled={loginUser.isLoading}
           >
             Login

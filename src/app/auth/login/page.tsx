@@ -3,7 +3,7 @@ import { LoginForm } from "./LoginForm";
 
 const Login = () => {
   return (
-    <>
+    <div className="mx-auto max-w-[360px] bg-slate-100 px-8 py-4">
       <PageHeading
         Subtitle={
           <>
@@ -16,7 +16,7 @@ const Login = () => {
       </PageHeading>
 
       <LoginForm />
-    </>
+    </div>
   );
 };
 

@@ -19,7 +19,7 @@ const Column: FC<{
 
 export default () => {
   return (
-    <div className=" flex h-full w-full items-stretch gap-x-4 md:gap-x-8 lg:gap-x-24">
+    <div className=" flex h-full w-full items-stretch gap-x-4 px-8 py-8 md:gap-x-8 lg:gap-x-24">
       <Column
         title="Planning to read"
         description="These are the items you are currently reading."
