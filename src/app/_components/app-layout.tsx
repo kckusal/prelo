@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type FC, type ReactNode, useMemo, Fragment } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useAuthToken, useAuthUser } from "../_store/auth";
 import { Link } from "./page-utils";
 import {
@@ -49,7 +49,10 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
     },
     onError: (err) => {
       console.log({ err });
-      // removeToken();
+      toast.error(err?.message || "Something went wrong!");
+      if (token) {
+        removeToken();
+      }
     },
   });
 

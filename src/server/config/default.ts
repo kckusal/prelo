@@ -3,8 +3,7 @@ interface CustomConfigType {
   origin: string;
 
   dbUri: string;
-  accessTokenPrivateKey: string;
-  accessTokenPublicKey: string;
+  jwtSigningSecretKey: string;
 }
 
 const customConfig: CustomConfigType = {
@@ -12,8 +11,7 @@ const customConfig: CustomConfigType = {
   origin: "http://localhost:3000",
 
   dbUri: process.env.DATABASE_URL!,
-  accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY!,
-  accessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC_KEY!,
+  jwtSigningSecretKey: process.env.JWT_SIGNING_SECRET_KEY!,
 };
 
 export default customConfig;

@@ -19,31 +19,38 @@ export const compareUserPassword = async ({
   return argon2Verify(hashedPassword, plainTextPassword);
 };
 
-export const signJwt = (
-  payload: Record<string, unknown>,
-  key: "accessTokenPrivateKey",
-  options: SignOptions = {},
-) => {
+export const signJwt = (options: {
+  payload: object;
+  configName: "jwtSigningSecretKey";
+  signOptions: SignOptions;
+}) => {
+  const { payload, configName, signOptions } = options;
   console.log("Signing JWT...");
-  const privateKey = customConfig[key];
-  return jwt.sign(payload, privateKey, {
-    ...(options && options),
-    algorithm: "RS256", // RS256 algorithm requires asymmetric RSA key pair
+  const secretKey = customConfig[configName];
+
+  const jwtToken = jwt.sign(payload, secretKey, {
+    ...(signOptions ?? {}),
+    algorithm: "HS256", // HS256 algorithm uses symmetric key
   });
+
+  return jwtToken;
 };
 
-export const verifyJwt = <T>(
-  token: string,
-  key: "accessTokenPublicKey",
-): T | null => {
-  const publicKey = customConfig[key];
+export const verifyJwt = <T>(options: {
+  token: string;
+  configName: "jwtSigningSecretKey";
+}): T | null => {
+  const { token, configName } = options;
+  const secretKey = customConfig[configName];
 
   try {
     console.log("Verifying JWT: ", token);
 
-    return jwt.verify(token, publicKey, {
-      algorithms: ["RS256"],
+    const decoded = jwt.verify(token, secretKey, {
+      algorithms: ["HS256"],
     }) as T;
+
+    return decoded;
   } catch (error) {
     console.log(error);
     throw new Error("Auth token verification failed!");

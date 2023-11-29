@@ -56,7 +56,7 @@ export class AuthService {
       if (!isPasswordMatching) {
         throw new Error("No user found with these credentials.");
       }
-      const jwtUserData: JwtAccessTokenPayload = {
+      const jwtPayload: JwtAccessTokenPayload = {
         user: {
           id: user.id,
           firstName: user.firstName,
@@ -65,13 +65,13 @@ export class AuthService {
       };
 
       // Create access token
-      const accessToken = signJwt(
-        { user: jwtUserData },
-        "accessTokenPrivateKey",
-        {
+      const accessToken = signJwt({
+        payload: jwtPayload,
+        configName: "jwtSigningSecretKey",
+        signOptions: {
           expiresIn: `${customConfig.accessTokenExpiresInMinutes}m`,
         },
-      );
+      });
 
       // send access token in cookie
       console.log("Setting access token in cookie...");
@@ -129,12 +129,12 @@ export class AuthService {
   static async getMe({ authToken }: { authToken: string }) {
     if (!authToken) return { user: null };
 
-    const jwtPayload = verifyJwt<JwtAccessTokenPayload>(
-      authToken,
-      "accessTokenPublicKey",
-    );
+    const jwtPayload = verifyJwt<JwtAccessTokenPayload>({
+      token: authToken,
+      configName: "jwtSigningSecretKey",
+    });
 
-    if (!jwtPayload?.user.id) {
+    if (!jwtPayload?.user?.id) {
       throw new Error("Invalid JWT access token!");
     }
 
