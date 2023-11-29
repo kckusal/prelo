@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type FC, type ReactNode, useMemo, Fragment } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import cx from "classnames";
 import { useAuthToken, useAuthUser } from "../_store/auth";
 import { Link } from "./page-utils";
 import {
@@ -16,7 +17,7 @@ const Header = () => {
   const { token } = useAuthToken();
 
   return (
-    <div className=" flex h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
+    <div className=" sticky top-0 flex h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
       <Link
         href="/dashboard"
         className=" text-white hover:text-gray-200 hover:no-underline"
@@ -32,6 +33,39 @@ const Header = () => {
         <div className=" text-sm">Login to continue.</div>
       )}
     </div>
+  );
+};
+
+const UserNavigation = () => {
+  const pathname = usePathname();
+
+  const navigationItems = useMemo(() => {
+    const navItems: {
+      label: string;
+      href: "/dashboard" | "/my-documents" | "/my-account";
+    }[] = [
+      { label: "HOME", href: "/dashboard" },
+      { label: "DOCUMENTS", href: "/my-documents" },
+      { label: "PROFILE", href: "/my-account" },
+    ];
+
+    return navItems;
+  }, []);
+
+  return (
+    <nav className="sticky top-[50px] flex h-[30px] items-center justify-center gap-4 bg-slate-200 px-3 text-xs">
+      {navigationItems.map((nav) => (
+        <Link
+          key={nav.href}
+          href={nav.href}
+          className={cx("text-gray-800", {
+            " font-extrabold": pathname === nav.href,
+          })}
+        >
+          {nav.label}
+        </Link>
+      ))}
+    </nav>
   );
 };
 
@@ -92,6 +126,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
     <div key="AppLayout" className=" flex flex-col">
       <Toaster />
       <Header />
+      {token && <UserNavigation />}
 
       <main className=" mx-auto min-h-[250px] min-w-[250px] max-w-[600px] bg-slate-100 px-6 py-6 text-gray-700 md:p-8">
         {children}
