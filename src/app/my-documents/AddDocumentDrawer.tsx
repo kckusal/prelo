@@ -15,13 +15,18 @@ type AddDocFields = Pick<
   "type" | "title" | "description" | "numOfPages" | "author" | "publishedDate"
 >;
 
-export const AddDocumentDrawer: FC = () => {
+interface Props {
+  onDocAdded?: (doc: Document) => void;
+}
+
+export const AddDocumentDrawer: FC<Props> = ({ onDocAdded }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const addDoc = api.document.addNew.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Document added successfully!", { duration: 4000 });
       setIsDrawerOpen(false);
+      onDocAdded?.(data);
     },
     onError: (err) => {
       const zodFieldErrors = Object.entries(
