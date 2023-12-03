@@ -20,40 +20,54 @@ enum ReadingStatus {
     READING_COMPLETED
 }
 
+model Tag {
+    id        Int               @id @default(autoincrement())
+    name      String
+    documents TagsOnDocuments[]
+
+    @@index([name])
+}
+
 model User {
-    id               Int        @id @default(autoincrement())
-    firstName        String
-    lastName         String
-    email            String     @unique
-    passwordHash     String
-    createdAt        DateTime   @default(now())
-    updatedAt        DateTime   @updatedAt
-    createdDocuments Document[] @relation(name: "createdBy")
-    updatedDocuments Document[] @relation(name: "updatedBy")
-    schedules        Schedule[] @relation(name: "schedule")
+    id           Int        @id @default(autoincrement())
+    firstName    String
+    lastName     String
+    email        String     @unique
+    passwordHash String
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    documents    Document[] @relation(name: "createdBy")
+    schedules    Schedule[] @relation(name: "schedule")
 
     @@index([email])
 }
 
 model Document {
-    id            Int          @id @default(autoincrement())
+    id            Int               @id @default(autoincrement())
     type          DocumentType
-    title         String       @db.VarChar(200)
+    title         String            @db.VarChar(200)
     description   String
     numOfPages    Int
     author        String
     publishedDate DateTime
-    tags          String[]
-    schedules     Schedule[]   @relation(name: "associatedDocument")
+    tags          TagsOnDocuments[]
+    schedules     Schedule[]        @relation(name: "associatedDocument")
 
     createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
     createdBy       User     @relation(name: "createdBy", fields: [createdByUserId], references: [id])
     createdByUserId Int
-    updatedBy       User     @relation(name: "updatedBy", fields: [updatedByUserId], references: [id])
-    updatedByUserId Int
 
-    @@index([type, author, tags])
+    @@index([type, author])
+}
+
+model TagsOnDocuments {
+    documentId Int
+    Document   Document @relation(fields: [documentId], references: [id])
+
+    tagId Int
+    tag   Tag @relation(fields: [tagId], references: [id])
+
+    @@id([documentId, tagId])
 }
 
 model Schedule {
