@@ -19,4 +19,12 @@ export class DocumentService {
       where: { id: docId },
     });
   }
+
+  static findDocsUserHasPlannedToRead(userId: number) {
+    return db.schedule.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+  }
 }
