@@ -34,3 +34,5 @@ export const useAuthUser = create<AuthUser>((set) => ({
   user: null,
   setUser: (user: Me) => set({ user: user }),
 }));
+
+export const clearTokenFromLocalstorage = () => localStorage.removeItem("auth");
