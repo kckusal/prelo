@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { isAuthenticated } from "~/server/middlewares/auth";
 import { AuthService } from "~/server/services/AuthService";
 
 export const authRouter = createTRPCRouter({
@@ -23,9 +24,7 @@ export const authRouter = createTRPCRouter({
       return await AuthService.register(input);
     }),
 
-  me: publicProcedure
-    .input(z.object({ authToken: z.string() }))
-    .mutation(async ({ input }) => {
-      return await AuthService.getMe(input);
-    }),
+  me: publicProcedure.use(isAuthenticated).mutation(async ({ ctx }) => {
+    return await AuthService.getMe(ctx.session.user.id);
+  }),
 });

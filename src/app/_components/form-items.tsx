@@ -10,6 +10,10 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   hasErrors?: boolean;
 };
 
+type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  hasErrors?: boolean;
+};
+
 type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement> & {
   requiredMark?: boolean;
 };
@@ -67,6 +71,21 @@ const Input: FC<InputProps> = ({ className, hasErrors, ...props }) => {
   );
 };
 
+const TextArea: FC<TextAreaProps> = ({ className, hasErrors, ...props }) => {
+  return (
+    <textarea
+      className={cx(
+        " w-full border border-gray-300 px-2 py-1 placeholder:text-sm placeholder:text-gray-300",
+        {
+          " border-red-500 outline-red-400": hasErrors,
+        },
+        className,
+      )}
+      {...props}
+    />
+  );
+};
+
 const Label: FC<LabelProps> = ({
   className,
   requiredMark,
@@ -107,6 +126,7 @@ const Form = {
   Input,
   Item,
   Label,
+  TextArea,
 };
 
 export default Form;

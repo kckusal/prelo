@@ -1,13 +1,9 @@
 import { db } from "../db";
-import {
-  compareUserPassword,
-  signJwt,
-  hashUserPassword,
-  verifyJwt,
-} from "../utils/auth";
+import { compareUserPassword, signJwt, hashUserPassword } from "../utils/auth";
 import customConfig from "../config/default";
 
 import { type TRPCContext } from "../api/trpc";
+import { type Session } from "../types";
 
 // [...] Cookie options
 const cookieOptions = {
@@ -35,9 +31,7 @@ interface RegisterParam {
   password: string;
 }
 
-interface JwtAccessTokenPayload {
-  user: { id: number; firstName: string; email: string };
-}
+type JwtAccessTokenPayload = Session;
 
 export class AuthService {
   static async login(ctx: TRPCContext, { email, password }: LoginParam) {
@@ -126,17 +120,8 @@ export class AuthService {
     });
   }
 
-  static async getMe({ authToken }: { authToken: string }) {
-    if (!authToken) return { user: null };
-
-    const jwtPayload = verifyJwt<JwtAccessTokenPayload>({
-      token: authToken,
-      configName: "jwtSigningSecretKey",
-    });
-
-    if (!jwtPayload?.user?.id) {
-      throw new Error("Invalid JWT access token!");
-    }
+  static async getMe(userId: number) {
+    if (!userId) return { user: null };
 
     console.log("Getting user...");
     const user = await db.user.findFirst({
@@ -148,7 +133,7 @@ export class AuthService {
         createdAt: true,
         updatedAt: true,
       },
-      where: { id: jwtPayload.user.id },
+      where: { id: userId },
     });
 
     return { user };

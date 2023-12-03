@@ -91,7 +91,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
           "Something went wrong while fetching auth data! Logging out...",
       );
 
-      if (err.message?.includes("token")) {
+      if (err.data?.code === "UNAUTHORIZED") {
         removeToken();
       }
     },
@@ -118,8 +118,8 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (!token || user) return;
-    // get user details
-    fetchMe({ authToken: token });
+    // get current user details
+    fetchMe();
   }, [fetchMe, user, token]);
 
   if (redirectUrl) {
