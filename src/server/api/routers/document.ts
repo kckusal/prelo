@@ -15,7 +15,7 @@ export const documentRouter = createTRPCRouter({
           .string()
           .max(200, "Title cannot be more than 200 chars!")
           .min(3),
-        description: z.string(),
+        description: z.string().optional(),
         numOfPages: z.number(),
         author: z.string(),
         publishedDate: z.date(),
@@ -24,6 +24,7 @@ export const documentRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await DocumentService.addNew({
         ...input,
+        description: input.description ?? "",
         createdAt: new Date(),
         createdByUserId: ctx.session.user.id,
       });

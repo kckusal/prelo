@@ -10,6 +10,16 @@ export class DocumentService {
 
   static async findDocumentsByUser(userId: number) {
     return db.document.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        numOfPages: true,
+        publishedDate: true,
+        type: true,
+        author: true,
+        schedules: true,
+      },
       where: { createdByUserId: userId },
     });
   }

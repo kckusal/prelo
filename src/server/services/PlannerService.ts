@@ -4,6 +4,10 @@ import { db } from "../db";
 export class PlannerService {
   static getSchedulesByStatus(input: Pick<Schedule, "userId" | "status">) {
     return db.schedule.findMany({
+      select: {
+        id: true,
+        document: true,
+      },
       where: input,
     });
   }

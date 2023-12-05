@@ -4,6 +4,8 @@ import { api } from "~/trpc/react";
 import { AddDocumentDrawer } from "./AddDocumentDrawer";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { SiReadthedocs } from "react-icons/si";
+import { FaRegCalendarCheck } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const MyDocuments = () => {
   const {
@@ -11,6 +13,15 @@ const MyDocuments = () => {
     refetch,
     isFetching,
   } = api.document.getMyDocuments.useQuery();
+
+  const addPlannedToRead = api.planner.addPlannedToRead.useMutation({
+    onSuccess: () => {
+      toast.success("Marked as planned to read!", { duration: 5000 });
+    },
+    onError: () => {
+      toast.error("Failed to mark as planned to read!", { duration: 5000 });
+    },
+  });
 
   return (
     <div className=" bg-sl mx-auto max-w-[900px] px-3 py-6">
@@ -20,7 +31,7 @@ const MyDocuments = () => {
         <AddDocumentDrawer onDocAdded={() => refetch()} />
       </div>
 
-      <table className=" table-sm mt-6 table">
+      <table className=" table table-sm mt-6">
         <thead>
           <tr>
             <th className=" w-[20px]"></th>
@@ -36,41 +47,58 @@ const MyDocuments = () => {
 
         <tbody>
           {!isFetching &&
-            documents?.map((d) => (
-              <tr key={d.id}>
-                <th>{d.id}</th>
-                <td>{d.type}</td>
-                <td>{d.title}</td>
-                <td>{d.description}</td>
-                <td>{d.numOfPages}</td>
-                <td>{d.author}</td>
-                <td>{d.publishedDate.toLocaleDateString()}</td>
-                <td className=" text-center">
-                  <div className=" inline-flex h-full items-center justify-center gap-x-2">
-                    <div
-                      data-tip="Planning to read?"
-                      className="tooltip tooltip-primary"
-                    >
-                      <button
-                        className=" btn btn-primary btn-outline btn-circle btn-xs"
-                        title="Delete"
-                      >
-                        <SiReadthedocs />
-                      </button>
-                    </div>
+            documents?.map((d) => {
+              const scheduleStatus = d.schedules[0]?.status;
 
-                    <div
-                      className=" tooltip tooltip-error"
-                      data-tip="Delete document?"
-                    >
-                      <button className=" btn btn-error btn-circle btn-outline btn-xs ">
-                        <RiDeleteBin6Line />
-                      </button>
+              return (
+                <tr key={d.id}>
+                  <th>{d.id}</th>
+                  <td>{d.type}</td>
+                  <td>{d.title}</td>
+                  <td>{d.description}</td>
+                  <td>{d.numOfPages}</td>
+                  <td>{d.author}</td>
+                  <td>{d.publishedDate.toLocaleDateString()}</td>
+                  <td className=" text-center">
+                    <div className=" inline-flex h-full items-center justify-center gap-x-2">
+                      <div
+                        data-tip={
+                          scheduleStatus === undefined
+                            ? "Planning to read?"
+                            : scheduleStatus === "READING_PLANNED"
+                              ? "Reading planned"
+                              : ""
+                        }
+                        className="tooltip tooltip-primary"
+                      >
+                        <button
+                          className=" btn btn-circle btn-outline btn-primary btn-xs"
+                          title="Delete"
+                          onClick={() =>
+                            addPlannedToRead.mutate({ docId: d.id })
+                          }
+                          disabled={!!scheduleStatus}
+                        >
+                          {!scheduleStatus && <SiReadthedocs />}
+                          {scheduleStatus === "READING_PLANNED" && (
+                            <FaRegCalendarCheck />
+                          )}
+                        </button>
+                      </div>
+
+                      <div
+                        className=" tooltip tooltip-error"
+                        data-tip="Delete document?"
+                      >
+                        <button className=" btn btn-circle btn-outline btn-error btn-xs ">
+                          <RiDeleteBin6Line />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              );
+            })}
 
           {isFetching && (
             <tr className=" h-[200px] bg-slate-50 text-center">
