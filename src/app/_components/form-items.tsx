@@ -18,6 +18,10 @@ type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement> & {
   requiredMark?: boolean;
 };
 
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
+  hasErrors?: boolean;
+};
+
 const Button: FC<ButtonProps> = ({ className, ...props }) => {
   return (
     <button
@@ -86,6 +90,21 @@ const TextArea: FC<TextAreaProps> = ({ className, hasErrors, ...props }) => {
   );
 };
 
+const Select: FC<SelectProps> = ({ className, hasErrors, ...props }) => {
+  return (
+    <select
+      className={cx(
+        " w-full border border-gray-300 px-2 py-1 placeholder:text-sm placeholder:text-gray-300",
+        {
+          " border-red-500 outline-red-400": hasErrors,
+        },
+        className,
+      )}
+      {...props}
+    />
+  );
+};
+
 const Label: FC<LabelProps> = ({
   className,
   requiredMark,
@@ -127,6 +146,7 @@ const Form = {
   Item,
   Label,
   TextArea,
+  Select,
 };
 
 export default Form;

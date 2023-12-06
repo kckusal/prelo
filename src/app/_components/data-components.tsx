@@ -1,7 +1,7 @@
 import { type FC, type ReactNode } from "react";
 
 const Empty = () => (
-  <p className=" flex min-h-[120px] items-center justify-center bg-white font-semibold">
+  <p className=" card flex min-h-[120px] items-center justify-center bg-white ">
     No data.
   </p>
 );

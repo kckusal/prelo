@@ -17,7 +17,7 @@ const Header = () => {
   const { token } = useAuthToken();
 
   return (
-    <div className=" sticky top-0 flex h-full max-h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
+    <div className=" sticky top-0 z-10 flex h-full max-h-[50px] items-center justify-between bg-gray-900 px-3 text-white">
       <Link
         href="/dashboard"
         className=" text-white hover:text-gray-200 hover:no-underline"
@@ -53,7 +53,7 @@ const UserNavigation = () => {
   }, []);
 
   return (
-    <nav className="sticky top-[50px] flex h-[30px] items-center justify-center gap-4 bg-slate-200 px-3 text-xs">
+    <nav className="sticky top-[50px] z-10 flex h-[30px] items-center justify-center gap-4 bg-slate-200 px-3 text-xs">
       {navigationItems.map((nav) => (
         <Link
           key={nav.href}

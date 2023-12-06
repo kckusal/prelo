@@ -6,9 +6,15 @@ export class PlannerService {
     return db.schedule.findMany({
       select: {
         id: true,
+        numOfPagesRead: true,
+        status: true,
         document: true,
+        createdAt: true,
       },
       where: input,
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
   }
 
