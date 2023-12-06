@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import Form from "~/app/_components/form-items";
 import { api } from "~/trpc/react";
 
+const authToastKey = "authToast";
+
 interface RegisterFields {
   firstName: string;
   lastName: string;
@@ -19,14 +21,15 @@ export const RegisterForm = () => {
 
   const registerUser = api.auth.register.useMutation({
     onSuccess: () => {
-      toast.success(`User registration successful! Try logging in!`, {
+      toast.success(`User registered! Try logging in!`, {
+        id: authToastKey,
         duration: 4000,
       });
       router.push("/auth/login");
     },
 
     onError(error) {
-      toast.error(error.message, { duration: 4000 });
+      toast.error(error.message, { id: authToastKey, duration: 4000 });
     },
   });
 
@@ -65,6 +68,7 @@ export const RegisterForm = () => {
       validateOnBlur={false}
       validateOnChange={false}
       onSubmit={(values) => {
+        toast.remove(authToastKey);
         registerUser.mutate(values);
       }}
     >
@@ -164,9 +168,12 @@ export const RegisterForm = () => {
 
           <Form.Button
             type="submit"
-            className=" mb-4 self-center"
+            className=" mb-4 gap-x-2 self-center"
             disabled={registerUser.isLoading}
           >
+            {registerUser.isLoading && (
+              <span className="loading loading-spinner loading-xs" />
+            )}
             Register
           </Form.Button>
         </form>

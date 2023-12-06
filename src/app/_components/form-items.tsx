@@ -27,6 +27,9 @@ const Button: FC<ButtonProps> = ({ className, ...props }) => {
     <button
       className={cx(
         " inline-flex items-center justify-center border bg-gray-900 px-3 py-1 text-white hover:text-opacity-80 active:text-opacity-100",
+        {
+          "cursor-not-allowed bg-gray-500": props.disabled,
+        },
         className,
       )}
       {...props}
