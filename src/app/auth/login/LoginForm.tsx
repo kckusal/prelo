@@ -6,6 +6,8 @@ import Form from "~/app/_components/form-items";
 import { useAuthToken } from "~/app/_store/auth";
 import { api } from "~/trpc/react";
 
+import { Button } from "@kcstack/ui-react";
+
 const authToastKey = "authToast";
 
 interface LoginFields {
@@ -89,16 +91,17 @@ export const LoginForm = () => {
             />
           </Form.Item>
 
-          <Form.Button
+          <Button
+            title="Click to submit"
             type="submit"
-            className=" mb-2 gap-x-2 self-center"
+            className=" mb-2 gap-x-2 self-center rounded bg-gray-600 p-3 text-white"
             disabled={loginUser.isLoading}
           >
             {loginUser.isLoading && (
               <span className="loading loading-spinner loading-xs" />
             )}
             Login
-          </Form.Button>
+          </Button>
         </form>
       )}
     </Formik>
